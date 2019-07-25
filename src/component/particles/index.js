@@ -9,12 +9,18 @@ class Particles extends Component {
         }
     }
 
+    componentDidMount(){
+        let canvas = this.refs.canvas;
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+    }
+
     render() {
         return (
             <div>
                 <canvas ref="canvas"></canvas>
                 <div>
-                    <button onClick={ () => this.drawOriginText('hell') }>draw</button>
+                    <button onClick={ () => this.drawOriginText('hello ajh') }>draw</button>
                 </div>
             </div>
         )
