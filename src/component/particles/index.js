@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Input, message, Select, Radio } from 'antd';
+import { Button, Input, message, Select, Radio, InputNumber, Slider } from 'antd';
 import styles from './index.module.scss';
 import strategy from './Strategy';
 
@@ -21,7 +21,9 @@ class Particles extends Component {
             },
             layoutStrategy: null,
             moveStrategy: null,
-            randomDelay: true
+            randomDelay: true,
+            sizeRate: 80,
+            fontSize: 256
         }
     }
 
@@ -65,10 +67,35 @@ class Particles extends Component {
                         <Radio value={true}>√</Radio>
                         <Radio value={false}>×</Radio>
                     </Radio.Group>
+                    间隔：
+                    <InputNumber defaultValue={this.state.step} onChange={(value) => this.changeStep(value)}></InputNumber>
+                    <br/>
+                    粒子大小：
+                    <Slider defaultValue={this.state.sizeRate} onChange={(value) => this.changeSizeRate(value)}></Slider>
+                    字体大小：
+                    <Slider defaultValue={this.state.fontSize} max={512} onChange={(value) => this.changeFontSize(value)}></Slider>
                 </div>
                 <canvas ref="canvas"></canvas>
             </div>
         )
+    }
+
+    changeStep(value){
+        this.setState({
+            step: value
+        });
+    }
+
+    changeSizeRate(value){
+        this.setState({
+            sizeRate: value
+        });
+    }
+
+    changeFontSize(value){
+        this.setState({
+            fontSize: value
+        });
     }
 
     moveStrategyChange(id){
@@ -98,7 +125,7 @@ class Particles extends Component {
         let {r, g, b, a} = this.state.backgroundColor;
         ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        ctx.font = 'bolder 256px serif';
+        ctx.font = `bolder ${this.state.fontSize}px serif`;
         var gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
         gradient.addColorStop("0", "magenta");
         gradient.addColorStop("0.5", "blue");
@@ -147,13 +174,13 @@ class Particles extends Component {
     }
 
     drawParticles() {
-        let { ctx, particles, step } = this.state, canvas = this.refs.canvas;
+        let { ctx, particles, step, sizeRate } = this.state, canvas = this.refs.canvas;
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         particles.forEach(p => {
             this.state.moveStrategy(p);
             ctx.beginPath();
             ctx.fillStyle = p.style;
-            let radius = step * 2 / 5;
+            let radius = step * sizeRate / 100 / 2;
             ctx.arc(p.x, p.y, radius, 0, Math.PI * 2);
             ctx.fill();
             ctx.closePath();
