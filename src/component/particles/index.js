@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Button, Input, message, Select } from 'antd';
+import { Button, Input, message, Select, Radio } from 'antd';
 import styles from './index.module.scss';
 import strategy from './Strategy';
 
@@ -20,7 +20,8 @@ class Particles extends Component {
                 a: 255
             },
             layoutStrategy: null,
-            moveStrategy: null
+            moveStrategy: null,
+            randomDelay: true
         }
     }
 
@@ -59,6 +60,11 @@ class Particles extends Component {
                     <Select defaultValue="0" onChange={ (value) => this.layoutStrategyChange(value) }>
                         { layoutOptions }
                     </Select>
+                    随机延迟
+                    <Radio.Group defaultValue={true} onChange={ (e) => this.setState({randomDelay: e.target.value}) }>
+                        <Radio value={true}>√</Radio>
+                        <Radio value={false}>×</Radio>
+                    </Radio.Group>
                 </div>
                 <canvas ref="canvas"></canvas>
             </div>
@@ -98,7 +104,7 @@ class Particles extends Component {
         gradient.addColorStop("0.5", "blue");
         gradient.addColorStop("1.0", "red");
         ctx.fillStyle = gradient;
-        ctx.fillText(text, 50, 500);
+        ctx.fillText(text, 50, 300);
         ctx.fill();
     }
 
@@ -120,7 +126,7 @@ class Particles extends Component {
                         targetX: j,
                         targetY: i,
                         style: `rgba(${r}, ${g}, ${b}, ${a})`,
-                        delay: Math.random() * 50 + 50,
+                        delay: this.state.randomDelay ? Math.random() * 50 + 50 : 50,
                         // retuen {x, y} stands for the start position
                         ...this.state.layoutStrategy(canvas.width, canvas.height)
                     });
