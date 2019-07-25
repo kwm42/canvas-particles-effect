@@ -7,6 +7,17 @@ function linearMove(p) {
     }
 }
 
+function randomMove(p) {
+    if (p.delay > 0)--p.delay;
+    else {
+        let diffX = p.targetX - p.x;
+        let diffY = p.targetY - p.y;
+        let distance = Math.sqrt(diffX * diffX + diffY * diffY) * .99;
+        p.x = p.targetX + Math.sin(Math.random() * 2 * Math.PI) * distance;
+        p.y = p.targetY + Math.cos(Math.random() * 2 * Math.PI) * distance;
+    }
+}
+
 function randomLayout(w, h){
     return {
         x: Math.random() * w,
@@ -32,7 +43,8 @@ function aroundLayout(w, h){
 
 module.exports = {
     moveStrategies: [
-        {id: '0', name: 'linearMove', value: linearMove}
+        {id: '0', name: 'linearMove', value: linearMove},
+        {id: '1', name: 'randomMove', value: randomMove}
     ],
     layoutStrategies: [
         {id: '0', name: 'pointLayout', value: pointLayout},

@@ -4,22 +4,23 @@ import styles from './index.module.scss';
 import strategy from './Strategy';
 
 const { Option } = Select;
+let requestId = null;
 
 class Particles extends Component {
     constructor() {
         super();
         this.state = {
             particles: [],
-            step: 8,
-            ctx: undefined,
+            step: 10,
+            ctx: null,
             backgroundColor: {
                 r: 255,
                 g: 255,
                 b: 255,
                 a: 255
             },
-            layoutStrategy: undefined,
-            moveStrategy: undefined
+            layoutStrategy: null,
+            moveStrategy: null
         }
     }
 
@@ -88,16 +89,16 @@ class Particles extends Component {
         let canvas = this.refs.canvas;
         let ctx = canvas.getContext('2d');
         if(!ctx) return;
-        ctx.fillStyle = '#fff';
+        let {r, g, b, a} = this.state.backgroundColor;
+        ctx.fillStyle = `rgba(${r}, ${g}, ${b}, ${a})`;
         ctx.fillRect(0, 0, canvas.width, canvas.height);
         ctx.font = 'bolder 256px serif';
         var gradient = ctx.createLinearGradient(0, 0, canvas.width, 0);
         gradient.addColorStop("0", "magenta");
         gradient.addColorStop("0.5", "blue");
         gradient.addColorStop("1.0", "red");
-        // 用渐变填色
         ctx.fillStyle = gradient;
-        ctx.fillText(text, 50, 530);
+        ctx.fillText(text, 50, 500);
         ctx.fill();
     }
 
@@ -119,8 +120,8 @@ class Particles extends Component {
                         targetX: j,
                         targetY: i,
                         style: `rgba(${r}, ${g}, ${b}, ${a})`,
-                        // style: 'blue',
                         delay: Math.random() * 50 + 50,
+                        // retuen {x, y} stands for the start position
                         ...this.state.layoutStrategy(canvas.width, canvas.height)
                     });
                 }
@@ -154,6 +155,10 @@ class Particles extends Component {
     }
 
     show() {
+        // if not, the animation speed will be more and more quick
+        if(requestId){
+            cancelAnimationFrame(requestId);
+        }
         let text = this.refs.input.state.value;
         if(!text){
             message.info('you have not enter anything yet i_i');
@@ -167,7 +172,7 @@ class Particles extends Component {
 
     animate(){
         this.drawParticles();
-        requestAnimationFrame(this.animate.bind(this));
+        requestId = requestAnimationFrame(this.animate.bind(this));
     }
 }
 
